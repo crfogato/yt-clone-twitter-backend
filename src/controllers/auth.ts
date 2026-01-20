@@ -1,7 +1,13 @@
 import type { RequestHandler } from "express";
 import { signupSchema } from "../schemas/signup.js";
-import { findUserByEmail, findUserBySlug } from "../services/user.js";
+import {
+  createUser,
+  findUserByEmail,
+  findUserBySlug,
+} from "../services/user.js";
 import slug from "slug";
+import { hash } from "bcrypt-ts";
+import { createJWT } from "../utils/jwt.js";
 
 export const signup: RequestHandler = async (req, res) => {
   const safeData = signupSchema.safeParse(req.body);
@@ -26,5 +32,23 @@ export const signup: RequestHandler = async (req, res) => {
     }
   }
 
-  res.json({});
+  const hashPassword = await hash(safeData.data.password, 10);
+
+  const newUser = await createUser({
+    slug: userSlug,
+    name: safeData.data.name,
+    email: safeData.data.email,
+    password: hashPassword,
+  });
+
+  const token = createJWT(userSlug);
+
+  res.status(201).json({
+    token,
+    user: {
+      name: newUser.name,
+      slug: newUser.slug,
+      avatar: newUser.avatar,
+    },
+  });
 };
