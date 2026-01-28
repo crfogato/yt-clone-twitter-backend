@@ -8,14 +8,13 @@ export const mainRouter = Router();
 
 mainRouter.get("/ping", pingController.ping);
 mainRouter.get("/privateping", verifyJWT, pingController.privateping);
-//mainRouter.get('/privateping')
 
 mainRouter.post("/auth/signup", authController.signup);
 mainRouter.post("/auth/signin", authController.signin);
 
 mainRouter.post("/tweet", verifyJWT, tweetController.addTweet);
-//mainRouter.get("/tweet/:id");
-//mainRouter.get("tweet/:id/answers");
+mainRouter.get("/tweet/:id", verifyJWT, tweetController.getTweet);
+mainRouter.get("/tweet/:id/answers", verifyJWT, tweetController.getAnswers);
 //mainRouter.post("/tweet/:id/like");
 
 //mainRouter.get("/user/:slug");
@@ -27,5 +26,5 @@ mainRouter.post("/tweet", verifyJWT, tweetController.addTweet);
 
 //mainRouter.get("/feed");
 //mainRouter.get("/search");
-//mainRouter.get("trending");
-//mainRouter.get("suggestions");
+//mainRouter.get("/trending");
+//mainRouter.get("/suggestions");
